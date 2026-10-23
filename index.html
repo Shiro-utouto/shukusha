@@ -374,7 +374,7 @@ select { width: 100%; padding: 9px 10px; border: 1px solid var(--line); border-r
           <button type="button" class="btn" id="saveSeq">まとめて保存</button>
           <button type="button" class="btn" id="saveZip">ZIPでまとめて</button>
         </div>
-        <p class="hint" id="saveHint">iPhoneでは保存を押すと共有メニューが開きます。「画像を保存」を選ぶと写真アプリに入ります。</p>
+        <p class="hint" id="saveHint">iPhoneでは共有メニューが開くので「画像を保存」を選ぶと写真アプリに入ります。Androidではダウンロードフォルダに保存され、ギャラリーやGoogleフォトにも表示されます。</p>
       </div>
     </aside>
   </div>
@@ -1222,6 +1222,8 @@ function zoomTo(s, cx, cy) {
 /* ---------- saving ---------- */
 let canSave = true;
 const touch = matchMedia('(pointer: coarse)').matches;
+// Android's share sheet often has no "save to gallery" option, so a plain download (Gallery / Photos picks it up) works better there.
+const isAndroid = /Android/i.test(navigator.userAgent);
 function outName(it) {
   const base = (it.name || 'photo').replace(/\.[^.]+$/, '');
   return `${base}_縮写.${it.result.fmt === 'webp' ? 'webp' : 'jpg'}`;
@@ -1235,7 +1237,7 @@ function download(name, blob) {
 // On phones, open the share sheet ("画像を保存" puts it in Photos). On computers, download.
 async function saveFiles(list) {
   const files = list.map(({ name, blob }) => new File([blob], name, { type: mimeOf(name) }));
-  if (touch && navigator.share && navigator.canShare && navigator.canShare({ files })) {
+  if (touch && !isAndroid && navigator.share && navigator.canShare && navigator.canShare({ files })) {
     try { await navigator.share({ files }); return 'shared'; }
     catch (e) { if (e && e.name === 'AbortError') return 'cancel'; }
   }
