@@ -1,6 +1,6 @@
 // 縮写 service worker: works offline after the first visit.
 // Bump VERSION whenever index.html or encoder.js changes.
-const VERSION = 'shukusha-v2';
+const VERSION = 'shukusha-v3';
 const CORE = ['./', 'index.html', 'encoder.js', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png', 'icons/icon-32.png'];
 
 self.addEventListener('install', (e) => {
